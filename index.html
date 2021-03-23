@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simon Says</title>
+
+    <style>
+        body {
+            background-color: #f9f9f9;
+            color: #777;
+        }
+        .btn {
+            padding: 30px 50px;
+            margin: 30px;
+            font-size: 24px;
+            text-align: center;
+            display: inline-block;
+            background-color: white;
+            box-shadow: 0 1px 5px rgba(0, 0, 0, .6);
+            border-radius: 3px;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="btn" id="1">1</div>
+    <div class="btn" id="2">2</div>
+    <div class="btn" id="3">3</div>
+    <div class="btn" id="4">4</div>
+
+    <button class="start">Start</button>
+
+    <script>
+        const btnsEl = document.querySelectorAll('.btn');
+        const startEl = document.querySelector('.start');
+
+        // const btn1 = document.getElementById('1');
+        // const btn2 = document.getElementById('2');
+        // const btn3 = document.getElementById('3');
+        // const btn4 = document.getElementById('4');
+
+        // const btns = [btn1, btn2, btn3, btn4];
+        const slow = 1000;
+        const normal = 700;
+        const fast = 400;
+        
+        let comp = [];
+        let user = [];
+        
+        
+        // listen to btns and flash
+        btnsEl.forEach(btn => btn.addEventListener('click', (e) => {
+            const curr = e.target;
+            curr.style.backgroundColor = 'orangered';
+            setTimeout(()=>{
+                curr.style.backgroundColor = 'white';
+            }, 300);
+        }));
+        
+        function flash(item) {
+            item.style.backgroundColor = 'orangered';
+            setTimeout(()=>{
+                item.style.backgroundColor = 'white';
+            }, 200);
+        }
+        
+        function lightUp(item, index) {
+            index = index * slow;
+            console.log(index);
+            setTimeout(() => {
+                flash(item)
+            }, index)
+        }
+        
+        function startGame() {
+            const random = btnsEl [ Math.floor (Math.random () * btnsEl.length)];
+            comp.push (random);
+            // comp.forEach((item, index, arr) => lightUp(item, index, arr));
+            for (i = 0; i < comp.length; i++) {
+                lightUp(comp[i], i);
+            }
+        }
+
+        startEl.addEventListener('click', startGame);
+    </script>
+</body>
+</html>
