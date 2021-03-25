@@ -65,8 +65,9 @@
         const slowEl = document.querySelector('.slow');
         const normalEl = document.querySelector('.normal');
         const fastEl = document.querySelector('.fast');
-        const muteEl = document.querySelector('.mute');
+        const soundEl = document.querySelector('.mute');
         const scoreEl = document.getElementById('score');
+        const sounds = document.querySelectorAll('.sound');
         const slow = 1000;
         const normal = 700;
         const fast = 400;
@@ -76,6 +77,7 @@
         let user = [];
         let chosenSpeed = normal;
         let score = 0;
+        let sound = 'on';
         
         // listen to btns and flash
         btnsEl.forEach(btn => btn.addEventListener('click', (e) => {
@@ -88,11 +90,20 @@
             }
         }));
         
-        //  MUTE ALL
-        function mute(el) {
-            document.querySelectorAll('audio').forEach(el => {
-                el.muted = true;
-            });
+        //  TOGGLE SOUND
+        function toggleSound(el) {
+            if (sound === 'on') {
+                document.querySelectorAll('audio').forEach(el => {
+                    el.muted = true;
+                    sound = 'off';
+                });
+            } else if (sound === 'off') {
+                console.log('turningon');
+                document.querySelectorAll('audio').forEach(el => {
+                    el.muted = false;
+                    sound = 'on';
+                });
+            }
         }        
 
         // INITIATE COMPUTERS PATTERN
@@ -102,19 +113,23 @@
         }
 
         // FLASH CURRENT ITEM
-        function flash(item) {
+        function flash(item, index) {
             item.style.backgroundColor = 'orangered';
             setTimeout(()=>{
                 item.style.backgroundColor = 'white';
             }, 250);
+
+            // PLAY CORRESPONDING SOUND
+            const currentElement = parseInt(item.id) - 1;
+            sounds[currentElement].play();
         }
         
         // ADD GAP BETWEEN FLASHES
         function pause(item, index) {
-            index = index * chosenSpeed;
+            gap = index * chosenSpeed;
             setTimeout(() => {
-                flash(item)
-            }, index)
+                flash(item, index)
+            }, gap)
         }
 
         // LOOP THROUGH COMPUTERS PATTERN
@@ -171,6 +186,10 @@
                 user.push(e.target);
                 const length = user.length;
                 const currRound = length - 1;
+
+                // PLAY CORRESPONDING SOUND
+                const currentElement = parseInt(e.target.id) - 1;
+                sounds[currentElement].play();
                 
                 // IF USER'S CORRECT
                 if (user[currRound] === comp[currRound]) {
@@ -196,10 +215,10 @@
         // EVENT LISTENERS
         speedBtnsEl.forEach(btn => btn.addEventListener('click', newGame));
         startEl.addEventListener('click', continueGame);
-        muteEl.addEventListener('click', mute);
+        soundEl.addEventListener('click', toggleSound);
 
         // FUTURE ADDITIONS
-        // => DISPLAY CURRENT SCORE + HIGH SCORE TABLE - NAME & SCORE
+        // => LEADER BOARD TABLE - NAME & SCORE
         // => LOCAL STORAGE
         // => KEYBOARD ARROWS TO SELECT BTNS
     </script>
