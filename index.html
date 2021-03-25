@@ -25,65 +25,165 @@
     </style>
 </head>
 <body>
-    <div class="btn" id="1">1</div>
-    <div class="btn" id="2">2</div>
-    <div class="btn" id="3">3</div>
-    <div class="btn" id="4">4</div>
 
-    <button class="start">Start</button>
+    <audio class="sound sound1" src="./assets/mp3/simonsound1.mp3" type = "audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    <audio class="sound sound2" src="./assets/mp3/simonsound2.mp3" type = "audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    <audio class="sound sound3" src="./assets/mp3/simonsound3.mp3" type = "audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    <audio class="sound sound4" src="./assets/mp3/simonsound4.mp3" type = "audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <h2 class="command"></h2>
+    <div class="btns-container">
+        <div class="btn" id="1">1</div>
+        <div class="btn" id="2">2</div>
+        <div class="btn" id="3">3</div>
+        <div class="btn" id="4">4</div>
+    </div>
+
+
+    <button class="start-btn">Start</button>
+    <button class="speed-btn slow">slow</button>
+    <button class="speed-btn normal">normal</button>
+    <button class="speed-btn fast">fast</button>
+    <button class="mute">Mute</button>
 
     <script>
+
+        const commandEl = document.querySelector('.command');
+        const btnsContainer = document.querySelector('.btns-container');
         const btnsEl = document.querySelectorAll('.btn');
-        const startEl = document.querySelector('.start');
-
-        // const btn1 = document.getElementById('1');
-        // const btn2 = document.getElementById('2');
-        // const btn3 = document.getElementById('3');
-        // const btn4 = document.getElementById('4');
-
-        // const btns = [btn1, btn2, btn3, btn4];
+        const startEl = document.querySelector('.start-btn');
+        const speedBtnsEl = document.querySelectorAll('.speed-btn');
+        const slowEl = document.querySelector('.slow');
+        const normalEl = document.querySelector('.normal');
+        const fastEl = document.querySelector('.fast');
+        const muteEl = document.querySelector('.mute');
         const slow = 1000;
         const normal = 700;
         const fast = 400;
         
+        let userTurn = false;
         let comp = [];
         let user = [];
-        
+        let chosenSpeed = normal;
+        let score = 0;
         
         // listen to btns and flash
         btnsEl.forEach(btn => btn.addEventListener('click', (e) => {
-            const curr = e.target;
-            curr.style.backgroundColor = 'orangered';
-            setTimeout(()=>{
-                curr.style.backgroundColor = 'white';
-            }, 300);
+            if (userTurn) {
+                const curr = e.target;
+                curr.style.backgroundColor = 'orangered';
+                setTimeout(()=>{
+                    curr.style.backgroundColor = 'white';
+                }, 300);
+            }
         }));
         
+        //  MUTE ALL
+        function mute(el) {
+            document.querySelectorAll('audio').forEach(el => {
+                el.muted = true;
+            });
+        }        
+
+        // INITIATE COMPUTERS PATTERN
+        function getRandom() {
+            const random = btnsEl [ Math.floor (Math.random () * btnsEl.length)];
+            comp.push (random);
+        }
+
+        // FLASH CURRENT ITEM
         function flash(item) {
             item.style.backgroundColor = 'orangered';
             setTimeout(()=>{
                 item.style.backgroundColor = 'white';
-            }, 200);
+            }, 250);
         }
         
-        function lightUp(item, index) {
-            index = index * slow;
-            console.log(index);
+        // ADD GAP BETWEEN FLASHES
+        function pause(item, index) {
+            index = index * chosenSpeed;
             setTimeout(() => {
                 flash(item)
             }, index)
+            userTurn = true;
         }
-        
-        function startGame() {
-            const random = btnsEl [ Math.floor (Math.random () * btnsEl.length)];
-            comp.push (random);
-            // comp.forEach((item, index, arr) => lightUp(item, index, arr));
+
+        // LOOP THROUGH COMPUTERS PATTERN
+        function displayOrder() {
             for (i = 0; i < comp.length; i++) {
-                lightUp(comp[i], i);
+                pause(comp[i], i);
             }
         }
 
-        startEl.addEventListener('click', startGame);
+        // STILL IN THE GAME
+        function continueGame() {
+            user = [];
+            getRandom();
+            displayOrder();
+        }
+        
+        // HARD RESET
+        function newGame() {
+            comp = [];
+            user = [];
+        }
+        
+        // CHOSEN SPEED
+        window.addEventListener('click', function(e){
+            if(e.target === fastEl) {
+                chosenSpeed = fast;
+            } else if (e.target === normalEl) {
+                chosenSpeed = normal;
+            } else if (e.target === slowEl) {
+                chosenSpeed = slow;
+            }
+
+        // USERS INPUT
+            if (userTurn && e.target.classList.contains('btn')) {
+                // SAVE INPUT
+                user.push(e.target);
+                const length = user.length;
+                const currRound = length - 1;
+                
+                // USER'S CORRECT
+                if (user[currRound] === comp[currRound]) {
+                    // ADD SCORE
+                    score ++;
+                    console.log(score);
+
+                    // COMPLETED SET
+                    if (user.length === comp.length) {
+                        userTurn = false;
+                        setTimeout(()=>{
+                            continueGame();
+                        }, 1000);
+                    }
+
+                // USER'S INCORRECT
+                } else {
+                    console.log('oh no, keep going...');
+                    userTurn = false;
+                }
+            }
+        });
+
+        // EVENT LISTENERS
+        speedBtnsEl.forEach(btn => btn.addEventListener('click', newGame));
+        startEl.addEventListener('click', continueGame);
+        muteEl.addEventListener('click', mute);
+
+        // FUTURE ADDITIONS
+        // => DISPLAY CURRENT SCORE + HIGH SCORE TABLE - NAME & SCORE
+        // => LOCAL STORAGE
+        // => KEYBOARD ARROWS TO SELECT BTNS
     </script>
 </body>
 </html>
