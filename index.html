@@ -47,6 +47,7 @@
         <div class="btn" id="4">4</div>
     </div>
 
+    <div class="score">Score: <span id = "score">0</span></div>
 
     <button class="start-btn">Start</button>
     <button class="speed-btn slow">slow</button>
@@ -65,6 +66,7 @@
         const normalEl = document.querySelector('.normal');
         const fastEl = document.querySelector('.fast');
         const muteEl = document.querySelector('.mute');
+        const scoreEl = document.getElementById('score');
         const slow = 1000;
         const normal = 700;
         const fast = 400;
@@ -113,7 +115,6 @@
             setTimeout(() => {
                 flash(item)
             }, index)
-            userTurn = true;
         }
 
         // LOOP THROUGH COMPUTERS PATTERN
@@ -121,6 +122,7 @@
             for (i = 0; i < comp.length; i++) {
                 pause(comp[i], i);
             }
+            userTurn = true;
         }
 
         // STILL IN THE GAME
@@ -130,10 +132,26 @@
             displayOrder();
         }
         
-        // HARD RESET
-        function newGame() {
+        // RESET PATTERNS
+        function resetPatterns() {
             comp = [];
             user = [];
+        }
+
+        // RESET CURRENT SCORE
+        function resetScore() {
+            scoreEl.innerHTML = 0;
+        }
+
+        // HARD RESET
+        function newGame() {
+            resetPatterns();
+            resetScore();
+        }
+
+        // SHOW CURRENT SCORE
+        function updateScoreBoard() {
+            scoreEl.innerHTML = score;
         }
         
         // CHOSEN SPEED
@@ -148,18 +166,19 @@
 
         // USERS INPUT
             if (userTurn && e.target.classList.contains('btn')) {
+
                 // SAVE INPUT
                 user.push(e.target);
                 const length = user.length;
                 const currRound = length - 1;
                 
-                // USER'S CORRECT
+                // IF USER'S CORRECT
                 if (user[currRound] === comp[currRound]) {
                     // ADD SCORE
                     score ++;
-                    console.log(score);
+                    updateScoreBoard();
 
-                    // COMPLETED SET
+                    // IF COMPLETED SET
                     if (user.length === comp.length) {
                         userTurn = false;
                         setTimeout(()=>{
@@ -167,9 +186,8 @@
                         }, 1000);
                     }
 
-                // USER'S INCORRECT
+                // IF USER'S INCORRECT
                 } else {
-                    console.log('oh no, keep going...');
                     userTurn = false;
                 }
             }
