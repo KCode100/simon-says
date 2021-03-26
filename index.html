@@ -13,43 +13,61 @@
         }
         .btn {
             padding: 30px 50px;
-            margin: 30px;
             font-size: 24px;
             text-align: center;
             display: inline-block;
             background-color: white;
-            box-shadow: 0 1px 5px rgba(0, 0, 0, .6);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, .6);
             border-radius: 3px;
+        }
+        .btn--1 {
+            background-color: rgb(134, 0, 0);
+        }
+        .btn--2 {
+            background-color: rgb(146, 146, 1);
+        }
+        .btn--3 {
+            background-color: green;
+        }
+        .btn--4 {
+            background-color: rgb(0, 0, 153);
+        }
+        .command {
+            text-transform: uppercase;
         }
 
     </style>
 </head>
 <body>
 
-    <audio class="sound sound1" src="./assets/mp3/simonsound1.mp3" type = "audio/mpeg">
+    <audio class="sound" src="./assets/mp3/simonsound1.mp3" type = "audio/mpeg">
         Your browser does not support the audio element.
     </audio>
-    <audio class="sound sound2" src="./assets/mp3/simonsound2.mp3" type = "audio/mpeg">
+    <audio class="sound" src="./assets/mp3/simonsound2.mp3" type = "audio/mpeg">
         Your browser does not support the audio element.
     </audio>
-    <audio class="sound sound3" src="./assets/mp3/simonsound3.mp3" type = "audio/mpeg">
+    <audio class="sound" src="./assets/mp3/simonsound3.mp3" type = "audio/mpeg">
         Your browser does not support the audio element.
     </audio>
-    <audio class="sound sound4" src="./assets/mp3/simonsound4.mp3" type = "audio/mpeg">
+    <audio class="sound" src="./assets/mp3/simonsound4.mp3" type = "audio/mpeg">
         Your browser does not support the audio element.
     </audio>
 
     <h2 class="command"></h2>
     <div class="btns-container">
-        <div class="btn" id="1">1</div>
-        <div class="btn" id="2">2</div>
-        <div class="btn" id="3">3</div>
-        <div class="btn" id="4">4</div>
+        <div class="btn btn--1" id="1">1</div>
+        <div class="btn btn--2" id="2">2</div>
+        <div class="btn btn--3" id="3">3</div>
+        <div class="btn btn--4" id="4">4</div>
     </div>
 
     <div class="score">Score: <span id = "score">0</span></div>
 
-    <button class="start-btn">Start</button>
+    <button class="start-btn">Play</button>
+    <div class="game-over" hidden>
+        Game over!
+        restart
+    </div>
     <button class="speed-btn slow">slow</button>
     <button class="speed-btn normal">normal</button>
     <button class="speed-btn fast">fast</button>
@@ -61,6 +79,7 @@
         const btnsContainer = document.querySelector('.btns-container');
         const btnsEl = document.querySelectorAll('.btn');
         const startEl = document.querySelector('.start-btn');
+        const gameOverEl = document.querySelector('.game-over');
         const speedBtnsEl = document.querySelectorAll('.speed-btn');
         const slowEl = document.querySelector('.slow');
         const normalEl = document.querySelector('.normal');
@@ -83,9 +102,9 @@
         btnsEl.forEach(btn => btn.addEventListener('click', (e) => {
             if (userTurn) {
                 const curr = e.target;
-                curr.style.backgroundColor = 'orangered';
+                curr.style.filter = "brightness(2)";
                 setTimeout(()=>{
-                    curr.style.backgroundColor = 'white';
+                    curr.style.filter = "brightness(1)";
                 }, 300);
             }
         }));
@@ -114,14 +133,21 @@
 
         // FLASH CURRENT ITEM
         function flash(item, index) {
-            item.style.backgroundColor = 'orangered';
+            item.style.filter = "brightness(2)";
             setTimeout(()=>{
-                item.style.backgroundColor = 'white';
+                item.style.filter = "brightness(1)";
             }, 250);
 
             // PLAY CORRESPONDING SOUND
             const currentElement = parseInt(item.id) - 1;
             sounds[currentElement].play();
+
+            // UPDATE COMMAND WHEN SET IS OVER
+            if (index === comp.length - 1) {
+                setTimeout(()=> {
+                    updateCommand('play');
+                }, 800);
+            }
         }
         
         // ADD GAP BETWEEN FLASHES
@@ -129,7 +155,13 @@
             gap = index * chosenSpeed;
             setTimeout(() => {
                 flash(item, index)
-            }, gap)
+            }, gap);
+            
+        }
+
+        // SHOW COMMAND
+        function updateCommand(command) {
+            commandEl.innerHTML = `${command}!`;
         }
 
         // LOOP THROUGH COMPUTERS PATTERN
@@ -137,14 +169,19 @@
             for (i = 0; i < comp.length; i++) {
                 pause(comp[i], i);
             }
+            
             userTurn = true;
-        }
+            }
 
-        // STILL IN THE GAME
-        function continueGame() {
+            // STILL IN THE GAME
+            function continueGame() {
+            removeStartBtn();
             user = [];
             getRandom();
-            displayOrder();
+            updateCommand('watch');
+            setTimeout(()=> {
+                displayOrder();
+            }, 1000);
         }
         
         // RESET PATTERNS
@@ -158,10 +195,34 @@
             scoreEl.innerHTML = 0;
         }
 
+        // SHOW START BTN
+        function showStartBtn() {
+            startEl.hidden = false;
+        }
+
+        // HIDE START BTN
+        function removeStartBtn() {
+            startEl.hidden = true;
+        }
+
+        // GAME OVER
+        function gameOver() {
+            userTurn = false;
+            gameOverEl.hidden = false;
+        }
+
+        // HIDE GAME OVER EL
+        function hideGameOver() {
+            gameOverEl.hidden = true;
+        }
+
         // HARD RESET
         function newGame() {
+            hideGameOver();
+            showStartBtn();
             resetPatterns();
             resetScore();
+            userTurn = false;
         }
 
         // SHOW CURRENT SCORE
@@ -202,12 +263,12 @@
                         userTurn = false;
                         setTimeout(()=>{
                             continueGame();
-                        }, 1000);
+                        }, 200);
                     }
 
                 // IF USER'S INCORRECT
                 } else {
-                    userTurn = false;
+                    gameOver();
                 }
             }
         });
@@ -216,6 +277,7 @@
         speedBtnsEl.forEach(btn => btn.addEventListener('click', newGame));
         startEl.addEventListener('click', continueGame);
         soundEl.addEventListener('click', toggleSound);
+        gameOverEl.addEventListener('click', continueGame);
 
         // FUTURE ADDITIONS
         // => LEADER BOARD TABLE - NAME & SCORE
