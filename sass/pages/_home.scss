@@ -1,0 +1,19 @@
+.section-main {
+  background-color: $color-primary-dark;
+}
+
+.game-container {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 2rem;
+  gap: 2rem;
+}
+
+.section-btns {
+  background-color: $color-primary-light-2;
+  padding: 3rem;
+  width: 100%;
+  margin-top: 5rem;
+}

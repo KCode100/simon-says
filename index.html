@@ -4,83 +4,60 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.3/css/all.css" integrity="sha384-SZXxX4whJ79/gErwcOYf+zWLeJdY/qpuqC4cAa9rOGUstPomtqpuNWT9wdPEn2fk" crossorigin="anonymous">
+    <link rel="stylesheet" href="./css/main.css">
     <title>Simon Says</title>
-
-    <style>
-        body {
-            background-color: #f9f9f9;
-            color: #777;
-        }
-        .btn {
-            padding: 30px 50px;
-            font-size: 24px;
-            text-align: center;
-            display: inline-block;
-            background-color: white;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, .6);
-            border-radius: 3px;
-        }
-        .btn--1 {
-            background-color: rgb(134, 0, 0);
-        }
-        .btn--2 {
-            background-color: rgb(146, 146, 1);
-        }
-        .btn--3 {
-            background-color: green;
-        }
-        .btn--4 {
-            background-color: rgb(0, 0, 153);
-        }
-        .command {
-            text-transform: uppercase;
-        }
-
-    </style>
 </head>
 <body>
 
-    <audio class="sound" src="./assets/mp3/simonsound1.mp3" type = "audio/mpeg">
-        Your browser does not support the audio element.
-    </audio>
-    <audio class="sound" src="./assets/mp3/simonsound2.mp3" type = "audio/mpeg">
-        Your browser does not support the audio element.
-    </audio>
-    <audio class="sound" src="./assets/mp3/simonsound3.mp3" type = "audio/mpeg">
-        Your browser does not support the audio element.
-    </audio>
-    <audio class="sound" src="./assets/mp3/simonsound4.mp3" type = "audio/mpeg">
-        Your browser does not support the audio element.
-    </audio>
+    <main class="section-main">
+        <header class="header">
+            <i class="mute fas fa-volume-mute fa-volume-up"></i>
+            <h2 class="header__command"></h2>
+        </header>
 
-    <h2 class="command"></h2>
-    <div class="btns-container">
-        <div class="btn btn--1" id="1">1</div>
-        <div class="btn btn--2" id="2">2</div>
-        <div class="btn btn--3" id="3">3</div>
-        <div class="btn btn--4" id="4">4</div>
-    </div>
+        <div class="game-container row">
+            <div class="btn btn--game btn--1" id="1"></div>
+            <div class="btn btn--game btn--2" id="2"></div>
+            <div class="btn btn--game btn--3" id="3"></div>
+            <div class="btn btn--game btn--4" id="4"></div>
+            <button class="btn btn__main">Play</button>
+            <button class="btn btn__main btn__main--game-over game-over">
+                Game over!
+                restart
+            </button>
+        </div>
+        
+        <section class="section-btns">
+        <div class="score">Score: <span id = "score">0</span></div>
+            <button class="btn btn--speed slow">slow</button>
+            <button class="btn btn--speed normal">normal</button>
+            <button class="btn btn--speed fast">fast</button>
+        </section>
 
-    <div class="score">Score: <span id = "score">0</span></div>
+        <audio class="sound" src="./mp3/simonsound1.mp3" type = "audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+        <audio class="sound" src="./mp3/simonsound2.mp3" type = "audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+        <audio class="sound" src="./mp3/simonsound3.mp3" type = "audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+        <audio class="sound" src="./mp3/simonsound4.mp3" type = "audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
 
-    <button class="start-btn">Play</button>
-    <div class="game-over" hidden>
-        Game over!
-        restart
-    </div>
-    <button class="speed-btn slow">slow</button>
-    <button class="speed-btn normal">normal</button>
-    <button class="speed-btn fast">fast</button>
-    <button class="mute">Mute</button>
+    </main>
+    
 
     <script>
-
-        const commandEl = document.querySelector('.command');
-        const btnsContainer = document.querySelector('.btns-container');
-        const btnsEl = document.querySelectorAll('.btn');
-        const startEl = document.querySelector('.start-btn');
+        const commandEl = document.querySelector('.header__command');
+        // const btnsContainer = document.querySelector('.game-container');
+        const btnsEl = document.querySelectorAll('.btn--game');
+        const startEl = document.querySelector('.btn__main');
         const gameOverEl = document.querySelector('.game-over');
-        const speedBtnsEl = document.querySelectorAll('.speed-btn');
+        const speedBtnsEl = document.querySelectorAll('.btn--speed');
         const slowEl = document.querySelector('.slow');
         const normalEl = document.querySelector('.normal');
         const fastEl = document.querySelector('.fast');
@@ -110,14 +87,14 @@
         }));
         
         //  TOGGLE SOUND
-        function toggleSound(el) {
+        function toggleSound(e) {
+            soundEl.classList.toggle("fa-volume-up");
             if (sound === 'on') {
                 document.querySelectorAll('audio').forEach(el => {
                     el.muted = true;
                     sound = 'off';
                 });
             } else if (sound === 'off') {
-                console.log('turningon');
                 document.querySelectorAll('audio').forEach(el => {
                     el.muted = false;
                     sound = 'on';
@@ -197,23 +174,23 @@
 
         // SHOW START BTN
         function showStartBtn() {
-            startEl.hidden = false;
+            startEl.style.display = 'inline-block';
         }
 
         // HIDE START BTN
         function removeStartBtn() {
-            startEl.hidden = true;
+            startEl.style.display = 'none';
         }
 
         // GAME OVER
         function gameOver() {
             userTurn = false;
-            gameOverEl.hidden = false;
+            gameOverEl.style.display = 'inline-block';
         }
 
         // HIDE GAME OVER EL
         function hideGameOver() {
-            gameOverEl.hidden = true;
+            gameOverEl.style.display = 'none';
         }
 
         // HARD RESET
@@ -281,7 +258,7 @@
 
         // FUTURE ADDITIONS
         // => LEADER BOARD TABLE - NAME & SCORE
-        // => LOCAL STORAGE
+        // => LOCAL STORAGE / BACK END DATABASE
         // => KEYBOARD ARROWS TO SELECT BTNS
     </script>
 </body>
