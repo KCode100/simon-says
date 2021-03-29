@@ -12,8 +12,8 @@
 
     <main class="section-main">
         <header class="header">
-            <i class="mute fas fa-volume-mute fa-volume-up"></i>
             <h2 class="header__command"></h2>
+            <i class="mute fas fa-volume-mute fa-volume-up"></i>
         </header>
 
         <div class="game-container row">
@@ -22,17 +22,27 @@
             <div class="btn btn--game btn--3" id="3"></div>
             <div class="btn btn--game btn--4" id="4"></div>
             <button class="btn btn__main">Play</button>
-            <button class="btn btn__main btn__main--game-over game-over">
-                Game over!
-                restart
+            <button class="btn btn__main game-over">
+                <span class="game-over__msg" id="message"></span>
+                <span class="game-over__replay-msg">replay</span>
             </button>
         </div>
         
         <section class="section-btns">
-        <div class="score">Score: <span id = "score">0</span></div>
-            <button class="btn btn--speed slow">slow</button>
-            <button class="btn btn--speed normal">normal</button>
-            <button class="btn btn--speed fast">fast</button>
+
+            <div class="scores">
+                <span class="scores__name">Score:</span>
+                <span class="scores__number" id = "score">0</span>
+                <span class="scores__name">Your high score:</span>
+                <span class="scores__number" id="high-score"></span>
+            </div>
+
+            <div class="speed-btns">
+                <div class="speed-btns__text">Speed:</div>
+                <button class="btn btn--speed slow">slow</button>
+                <button class="btn btn--speed normal active">normal</button>
+                <button class="btn btn--speed fast">fast</button>
+            </div>
         </section>
 
         <audio class="sound" src="./mp3/simonsound1.mp3" type = "audio/mpeg">
@@ -48,21 +58,32 @@
             Your browser does not support the audio element.
         </audio>
 
+        <!-- WIN AND LOSE SOUND EFFECTS
+         -->
+
+        <audio class="sound-win" src="./mp3/win.mp3" type = "audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+        <audio class="sound-fail" src="./mp3/fail.mp3" type = "audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+
     </main>
     
 
     <script>
         const commandEl = document.querySelector('.header__command');
-        // const btnsContainer = document.querySelector('.game-container');
         const btnsEl = document.querySelectorAll('.btn--game');
         const startEl = document.querySelector('.btn__main');
         const gameOverEl = document.querySelector('.game-over');
+        const messageEl = document.getElementById('message');
         const speedBtnsEl = document.querySelectorAll('.btn--speed');
         const slowEl = document.querySelector('.slow');
         const normalEl = document.querySelector('.normal');
         const fastEl = document.querySelector('.fast');
         const soundEl = document.querySelector('.mute');
         const scoreEl = document.getElementById('score');
+        const highScoreEl = document.getElementById('high-score');
         const sounds = document.querySelectorAll('.sound');
         const slow = 1000;
         const normal = 700;
@@ -74,6 +95,7 @@
         let chosenSpeed = normal;
         let score = 0;
         let sound = 'on';
+        let highScore = Number(localStorage.getItem('highScore'));
         
         // listen to btns and flash
         btnsEl.forEach(btn => btn.addEventListener('click', (e) => {
@@ -133,27 +155,31 @@
             setTimeout(() => {
                 flash(item, index)
             }, gap);
-            
         }
 
         // SHOW COMMAND
         function updateCommand(command) {
             commandEl.innerHTML = `${command}!`;
         }
+        
+        // HIDE COMMAND
+        function removeCommand() {
+            commandEl.innerHTML = '';
+        }
+
 
         // LOOP THROUGH COMPUTERS PATTERN
         function displayOrder() {
             for (i = 0; i < comp.length; i++) {
                 pause(comp[i], i);
             }
-            
             userTurn = true;
             }
 
             // STILL IN THE GAME
             function continueGame() {
-            removeStartBtn();
             user = [];
+            removeStartBtn();
             getRandom();
             updateCommand('watch');
             setTimeout(()=> {
@@ -169,7 +195,8 @@
 
         // RESET CURRENT SCORE
         function resetScore() {
-            scoreEl.innerHTML = 0;
+            score = 0;
+            scoreEl.innerHTML = score;
         }
 
         // SHOW START BTN
@@ -182,10 +209,30 @@
             startEl.style.display = 'none';
         }
 
+        // MESSAGE - GAME OVER/HIGH SCORE
+        function message(text) {
+            messageEl.innerText = text;
+        }
+
+        // CHECK IF BEAT HIGH SCORE
+        function checkScore() {
+            if (score > highScore) {
+                document.querySelector('.sound-win').play();
+                message('High score!');
+                highScore = score;
+                localStorage.setItem('highScore', highScore);
+            } else {
+                document.querySelector('.sound-fail').play();
+                message('Game over!');
+            }
+        }
+
         // GAME OVER
         function gameOver() {
             userTurn = false;
+            checkScore();
             gameOverEl.style.display = 'inline-block';
+            removeCommand();
         }
 
         // HIDE GAME OVER EL
@@ -195,11 +242,26 @@
 
         // HARD RESET
         function newGame() {
+            userTurn = false;
             hideGameOver();
             showStartBtn();
             resetPatterns();
             resetScore();
+        }
+
+        // UPDATE HIGH SCORE
+        function updateHighScore() {
+            highScoreEl.innerText = highScore;
+        }
+        
+        // restart game
+        function restartGame() {
             userTurn = false;
+            updateHighScore();
+            hideGameOver();
+            resetPatterns();
+            resetScore();
+            continueGame();
         }
 
         // SHOW CURRENT SCORE
@@ -207,16 +269,27 @@
             scoreEl.innerHTML = score;
         }
         
-        // CHOSEN SPEED
         window.addEventListener('click', function(e){
-            if(e.target === fastEl) {
-                chosenSpeed = fast;
-            } else if (e.target === normalEl) {
-                chosenSpeed = normal;
-            } else if (e.target === slowEl) {
-                chosenSpeed = slow;
-            }
+            if (e.target.classList.contains('btn--speed')) {
+                for (i = 0; i < speedBtnsEl.length; i ++) {
+                    if (speedBtnsEl[i] === e.target) {
+                        speedBtnsEl[i].classList.add('active');
+                    } else {
+                        speedBtnsEl[i].classList.remove('active');
+                    }
+                }
+                
+                // CHOSEN SPEED
+                if(e.target === fastEl) {
+                    chosenSpeed = fast;
+                } else if (e.target === normalEl) {
+                    chosenSpeed = normal;
+                } else if (e.target === slowEl) {
+                    chosenSpeed = slow;
+                }
+            };
 
+           
         // USERS INPUT
             if (userTurn && e.target.classList.contains('btn')) {
 
@@ -250,13 +323,24 @@
             }
         });
 
+        // CHECK LOCAL STORAGE
+        window.addEventListener("load",
+            function(){
+                if (!highScore) {
+                    localStorage.setItem('highScore', 0);
+                }
+                highScoreEl.innerText = highScore;
+            }
+        );
+
         // EVENT LISTENERS
         speedBtnsEl.forEach(btn => btn.addEventListener('click', newGame));
         startEl.addEventListener('click', continueGame);
         soundEl.addEventListener('click', toggleSound);
-        gameOverEl.addEventListener('click', continueGame);
+        gameOverEl.addEventListener('click', restartGame);
 
         // FUTURE ADDITIONS
+        // YOU LOST SOUND EFFECT!!!
         // => LEADER BOARD TABLE - NAME & SCORE
         // => LOCAL STORAGE / BACK END DATABASE
         // => KEYBOARD ARROWS TO SELECT BTNS

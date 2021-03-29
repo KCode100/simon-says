@@ -16,14 +16,10 @@
     font-size: 30px;
     background-color: $color-black;
     padding: 5rem 0;
-    width: 30%;
+    width: 20rem;
     border-radius: 1rem;
     border: 1.5px solid white;
-
-    &--game-over {
-      display: none;
-      padding: 2.5rem 0;
-    }
+    font-weight: 700;
 
     &:hover {
       background-color: rgb(37, 37, 44);
@@ -34,11 +30,11 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 18rem;
-    width: 35%;
+    height: 24rem;
+    width: 40%;
 
-    @media (max-width: 480px) {
-      height: 10rem;
+    @media (max-width: 600px) {
+      height: 14rem;
     }
   }
   &--1 {
@@ -58,10 +54,58 @@
     padding: 1.5rem 3.5rem;
     border-radius: 3px;
     font-weight: 700;
-
+    margin: 0.5rem;
+    width: 12rem;
     &:hover {
       background-color: $color-primary-light;
       color: $color-black;
+    }
+    @media (max-width: 468px) {
+      width: 100%;
+    }
+  }
+}
+
+.active {
+  background-color: $color-primary-light;
+  color: $color-black;
+}
+
+.game-over {
+  display: none;
+  padding: 2.5rem;
+
+  &__msg {
+    text-transform: capitalize;
+    font-size: 1.8rem;
+    display: block;
+    margin-bottom: 1rem;
+  }
+  &__replay-msg {
+    letter-spacing: 1.2px;
+  }
+}
+
+.speed-btns {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 3rem;
+
+  @media (max-width: 468px) {
+    flex-direction: column;
+  }
+
+  &__text {
+    color: $color-white;
+    text-transform: uppercase;
+    font-weight: 500;
+    font-size: 1.6rem;
+    letter-spacing: 1.2px;
+    margin-right: 2rem;
+    @media (max-width: 468px) {
+      margin-right: 0;
     }
   }
 }

@@ -1,9 +1,5 @@
 .row {
-  display: flex;
   max-width: $grid-width;
-  margin: auto;
-  flex-wrap: wrap;
-  gap: 6rem;
 }
 
 .col {
