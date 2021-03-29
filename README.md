@@ -1,4 +1,4 @@
-# simon-says
+# Simon-Says Memory Game (24hr challenge)
 MEMORY GAME - 24 HOUR CHALLENGE
 
 
