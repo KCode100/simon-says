@@ -266,6 +266,7 @@ body {
 .section-main {
   background-color: #223b4f;
   position: relative;
+  min-height: 100vh;
 }
 
 .game-container {
