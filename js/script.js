@@ -65,8 +65,10 @@ function flash(item, index) {
 	}, 250);
 
 	// PLAY CORRESPONDING SOUND
-	// const currentElement = parseInt(item.id) - 1;
-	let audio = new Audio(`../mp3/simonsound${item.id}.mp3`);
+	// let audio = new Audio(`../mp3/simonsound${item.id}.mp3`);
+	let audio = new Audio(
+		`https://kcode100.github.io/simon-says/mp3/simonsound${e.target.id}.mp3`
+	);
 	audio.play();
 
 	// UPDATE COMMAND WHEN SET IS OVER
@@ -225,7 +227,10 @@ window.addEventListener('click', function (e) {
 
 		// PLAY CORRESPONDING SOUND
 		// const currentElement = parseInt(e.target.id) - 1;
-		let audio = new Audio(`../mp3/simonsound${e.target.id}.mp3`);
+		// let audio = new Audio(`../mp3/simonsound${item.id}.mp3`);
+		let audio = new Audio(
+			`https://kcode100.github.io/simon-says/mp3/simonsound${e.target.id}.mp3`
+		);
 		audio.play();
 
 		// IF USER'S CORRECT
