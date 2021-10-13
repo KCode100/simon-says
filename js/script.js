@@ -67,7 +67,7 @@ function flash(item, index) {
 	// PLAY CORRESPONDING SOUND
 	// let audio = new Audio(`../mp3/simonsound${item.id}.mp3`);
 	let audio = new Audio(
-		`https://kcode100.github.io/simon-says/mp3/simonsound${e.target.id}.mp3`
+		`https://kcode100.github.io/simon-says/mp3/simonsound${item.id}.mp3`
 	);
 	audio.play();
 
