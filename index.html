@@ -1,75 +1,370 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.3/css/all.css" integrity="sha384-SZXxX4whJ79/gErwcOYf+zWLeJdY/qpuqC4cAa9rOGUstPomtqpuNWT9wdPEn2fk" crossorigin="anonymous">
-    <link rel="stylesheet" href="./css/main.css">
-    <title>Simon Says</title>
-</head>
-<body>
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link
+			rel="stylesheet"
+			href="https://use.fontawesome.com/releases/v5.15.3/css/all.css"
+			integrity="sha384-SZXxX4whJ79/gErwcOYf+zWLeJdY/qpuqC4cAa9rOGUstPomtqpuNWT9wdPEn2fk"
+			crossorigin="anonymous"
+		/>
+		<style>
+			*,
+			*::after,
+			*::before {
+				margin: 0;
+				padding: 0;
+				-webkit-box-sizing: inherit;
+				box-sizing: inherit;
+			}
 
-    <main class="section-main">
-        <header class="header">
-            <h2 class="header__command"></h2>
-            <i class="mute fas fa-volume-mute fa-volume-up"></i>
-        </header>
+			html {
+				font-size: 62.5%;
+			}
 
-        <div class="game-container row">
-            <div class="btn btn--game btn--1" id="1"></div>
-            <div class="btn btn--game btn--2" id="2"></div>
-            <div class="btn btn--game btn--3" id="3"></div>
-            <div class="btn btn--game btn--4" id="4"></div>
-            <button class="btn btn__main">Play</button>
-            <button class="btn btn__main game-over">
-                <span class="game-over__msg" id="message"></span>
-                <span class="game-over__replay-msg">replay</span>
-            </button>
-        </div>
-        
-        <section class="section-btns">
+			body {
+				-webkit-box-sizing: border-box;
+				box-sizing: border-box;
+			}
 
-            <div class="scores">
-                <span class="scores__name">Score:</span>
-                <span class="scores__number" id = "score">0</span>
-                <span class="scores__name">Your high score:</span>
-                <span class="scores__number" id="high-score"></span>
-            </div>
+			body {
+				font-weight: 400;
+				line-height: 1.7;
+				padding: 2rem;
+				overflow-x: hidden;
+				font-family: sans-serif;
+			}
 
-            <div class="speed-btns">
-                <div class="speed-btns__text">Speed:</div>
-                <button class="btn btn--speed slow">slow</button>
-                <button class="btn btn--speed normal active">normal</button>
-                <button class="btn btn--speed fast">fast</button>
-            </div>
-        </section>
+			@media (max-width: 600px) {
+				body {
+					padding: 0;
+				}
+			}
 
-        <audio class="sound" src="./mp3/simonsound1.mp3" type = "audio/mpeg">
-            Your browser does not support the audio element.
-        </audio>
-        <audio class="sound" src="./mp3/simonsound2.mp3" type = "audio/mpeg">
-            Your browser does not support the audio element.
-        </audio>
-        <audio class="sound" src="./mp3/simonsound3.mp3" type = "audio/mpeg">
-            Your browser does not support the audio element.
-        </audio>
-        <audio class="sound" src="./mp3/simonsound4.mp3" type = "audio/mpeg">
-            Your browser does not support the audio element.
-        </audio>
+			.u-center-text {
+				text-align: center;
+			}
 
-        <!-- WIN AND LOSE SOUND EFFECTS
+			.u-margin-bottom-small {
+				margin-bottom: 1.5rem;
+			}
+
+			.u-margin-bottom-medium {
+				margin-bottom: 4rem;
+			}
+
+			.u-margin-bottom-big {
+				margin-bottom: 8rem;
+			}
+
+			.u-margin-top-big {
+				margin-top: 8rem;
+			}
+
+			.u-margin-top-huge {
+				margin-top: 10rem;
+			}
+
+			.btn {
+				display: inline-block;
+				background-color: #000;
+				color: #fff;
+				border: none;
+				outline: none;
+				text-transform: uppercase;
+				text-align: center;
+				cursor: pointer;
+			}
+
+			.btn__main {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				-webkit-transform: translate(-50%, -50%);
+				transform: translate(-50%, -50%);
+				font-size: 30px;
+				background-color: #000;
+				padding: 5rem 0;
+				width: 20rem;
+				border-radius: 1rem;
+				border: 1.5px solid white;
+				font-weight: 700;
+			}
+
+			.btn__main:hover {
+				background-color: #25252c;
+			}
+
+			.btn--game {
+				display: -webkit-box;
+				display: -ms-flexbox;
+				display: flex;
+				-webkit-box-pack: center;
+				-ms-flex-pack: center;
+				justify-content: center;
+				-webkit-box-align: center;
+				-ms-flex-align: center;
+				align-items: center;
+				height: 24rem;
+				width: 40%;
+			}
+
+			@media (max-width: 600px) {
+				.btn--game {
+					height: 14rem;
+				}
+			}
+
+			.btn--1 {
+				background-color: darkred;
+			}
+
+			.btn--2 {
+				background-color: #aa5e00;
+			}
+
+			.btn--3 {
+				background-color: darkgreen;
+			}
+
+			.btn--4 {
+				background-color: darkblue;
+			}
+
+			.btn--speed {
+				padding: 1.5rem 3.5rem;
+				border-radius: 3px;
+				font-weight: 700;
+				margin: 0.5rem;
+				width: 12rem;
+			}
+
+			.btn--speed:hover {
+				background-color: #06e8fc;
+				color: #000;
+			}
+
+			@media (max-width: 468px) {
+				.btn--speed {
+					width: 100%;
+				}
+			}
+
+			.active {
+				background-color: #06e8fc;
+				color: #000;
+			}
+
+			.game-over {
+				display: none;
+				padding: 2.5rem;
+			}
+
+			.game-over__msg {
+				text-transform: capitalize;
+				font-size: 1.8rem;
+				display: block;
+				margin-bottom: 1rem;
+			}
+
+			.game-over__replay-msg {
+				letter-spacing: 1.2px;
+			}
+
+			.speed-btns {
+				display: -webkit-box;
+				display: -ms-flexbox;
+				display: flex;
+				-webkit-box-pack: start;
+				-ms-flex-pack: start;
+				justify-content: flex-start;
+				-webkit-box-align: center;
+				-ms-flex-align: center;
+				align-items: center;
+				-ms-flex-wrap: wrap;
+				flex-wrap: wrap;
+				margin-top: 3rem;
+			}
+
+			@media (max-width: 468px) {
+				.speed-btns {
+					-webkit-box-orient: vertical;
+					-webkit-box-direction: normal;
+					-ms-flex-direction: column;
+					flex-direction: column;
+				}
+			}
+
+			.speed-btns__text {
+				color: #fff;
+				text-transform: uppercase;
+				font-weight: 500;
+				font-size: 1.6rem;
+				letter-spacing: 1.2px;
+				margin-right: 2rem;
+			}
+
+			@media (max-width: 468px) {
+				.speed-btns__text {
+					margin-right: 0;
+				}
+			}
+
+			.scores {
+				display: block;
+				background-color: rgba(34, 59, 79, 0.6);
+				color: #fff;
+				font-weight: 700;
+				font-size: 2rem;
+				padding: 1.4rem;
+				border-radius: 5px;
+				max-width: 40rem;
+				margin: auto;
+				text-align: center;
+			}
+
+			.scores__number {
+				color: #06e8fc;
+			}
+
+			.scores__number:not(:last-child) {
+				margin-right: 2rem;
+			}
+
+			.mute {
+				position: absolute;
+				top: 4rem;
+				right: 4rem;
+				font-size: 20px;
+				color: white;
+				cursor: pointer;
+				border-radius: 50%;
+				border: 2px solid white;
+				padding: 0.7rem;
+			}
+
+			.row {
+				max-width: 80rem;
+			}
+
+			.col {
+				-webkit-box-flex: 1;
+				-ms-flex: 1;
+				flex: 1;
+			}
+
+			.header {
+				height: 8rem;
+				text-align: center;
+				display: -webkit-box;
+				display: -ms-flexbox;
+				display: flex;
+				-webkit-box-pack: center;
+				-ms-flex-pack: center;
+				justify-content: center;
+				-webkit-box-align: center;
+				-ms-flex-align: center;
+				align-items: center;
+			}
+
+			.header__command {
+				color: #06e8fc;
+				text-transform: uppercase;
+				font-size: 2.4rem;
+				letter-spacing: 1.2px;
+			}
+
+			.section-main {
+				background-color: #223b4f;
+				position: relative;
+				min-height: 100vh;
+			}
+
+			.game-container {
+				position: relative;
+				display: -webkit-box;
+				display: -ms-flexbox;
+				display: flex;
+				margin: auto;
+				-ms-flex-wrap: wrap;
+				flex-wrap: wrap;
+				-webkit-box-pack: center;
+				-ms-flex-pack: center;
+				justify-content: center;
+				padding: 2rem;
+				gap: 2rem;
+			}
+
+			.section-btns {
+				background-color: #596d7d;
+				padding: 3rem;
+				margin-top: 5rem;
+			}
+			/*# sourceMappingURL=main.css.map */
+		</style>
+		<title>Simon Says</title>
+	</head>
+	<body>
+		<main class="section-main">
+			<header class="header">
+				<h2 class="header__command"></h2>
+				<i class="mute fas fa-volume-mute fa-volume-up"></i>
+			</header>
+
+			<div class="game-container row">
+				<div class="btn btn--game btn--1" id="1"></div>
+				<div class="btn btn--game btn--2" id="2"></div>
+				<div class="btn btn--game btn--3" id="3"></div>
+				<div class="btn btn--game btn--4" id="4"></div>
+				<button class="btn btn__main">Play</button>
+				<button class="btn btn__main game-over">
+					<span class="game-over__msg" id="message"></span>
+					<span class="game-over__replay-msg">replay</span>
+				</button>
+			</div>
+
+			<section class="section-btns">
+				<div class="scores">
+					<span class="scores__name">Score:</span>
+					<span class="scores__number" id="score">0</span>
+					<span class="scores__name">Your high score:</span>
+					<span class="scores__number" id="high-score"></span>
+				</div>
+
+				<div class="speed-btns">
+					<div class="speed-btns__text">Speed:</div>
+					<button class="btn btn--speed slow">slow</button>
+					<button class="btn btn--speed normal">normal</button>
+					<button class="btn btn--speed fast active">fast</button>
+				</div>
+			</section>
+
+			<!-- <audio class="sound" src="./mp3/simonsound1.mp3" type="audio/mpeg">
+				Your browser does not support the audio element.
+			</audio>
+			<audio class="sound" src="./mp3/simonsound2.mp3" type="audio/mpeg">
+				Your browser does not support the audio element.
+			</audio>
+			<audio class="sound" src="./mp3/simonsound3.mp3" type="audio/mpeg">
+				Your browser does not support the audio element.
+			</audio>
+			<audio class="sound" src="./mp3/simonsound4.mp3" type="audio/mpeg">
+				Your browser does not support the audio element.
+			</audio> -->
+
+			<!-- WIN AND LOSE SOUND EFFECTS
          -->
 
-        <audio class="sound-win" src="./mp3/win.mp3" type = "audio/mpeg">
-            Your browser does not support the audio element.
-        </audio>
-        <audio class="sound-fail" src="./mp3/fail.mp3" type = "audio/mpeg">
-            Your browser does not support the audio element.
-        </audio>
+			<audio class="sound-win" src="./mp3/win.mp3" type="audio/mpeg">
+				Your browser does not support the audio element.
+			</audio>
+			<audio class="sound-fail" src="./mp3/fail.mp3" type="audio/mpeg">
+				Your browser does not support the audio element.
+			</audio>
+		</main>
 
-    </main>
-    
-    <script src="./js/script.js"></script>
-</body>
+		<script src="./js/script.js"></script>
+	</body>
 </html>
